@@ -8,7 +8,6 @@ from langchain_groq import ChatGroq
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 import tempfile
-import os
 
 
 
@@ -44,8 +43,8 @@ def proccess_documents(file):
 
 
 # UI LAYOUT
-st.title('Mechanical Design Manual Chatbot')
-st.header('Mechanical Design Manual')
+st.title('RAG Chatbot')
+st.header('Get the answer from your uploaded PDF')
 
 with st.sidebar:
     st.header('Settings')
@@ -55,7 +54,7 @@ with st.sidebar:
     
     # MODEL SELECTION
     model_name = st.selectbox('Model',
-        ['llama-3.1-8b-instant', 'groq/compound', 'llama-3.1-16b-instant', 'llama-3.1-70b-instant'], 
+        ['whisper-large-v3-turbo','llama-3.3-70b-versatile','openai/gpt-oss-120b', 'groq/compound', 'openai/gpt-oss-safeguard-20b', 'meta-llama/llama-4-scout-17b-16e-instruct'], 
         index=0)
 
     # PDF FILE UPLOAD
@@ -88,7 +87,7 @@ def get_chain(api_key, model_name, _retriever):
 
     # CREATING A PROMPT TEMPLATE
     prompt = ChatPromptTemplate.from_messages([
-        ('system', 'You are a Senior Mechanical Engineer. Answer the questions with best answer with proper logic. Context : {context}'),
+        ('system', 'You are a very helpful assistant. Answer the questions with best answer with proper logic and mention if you donot know the proper answer. Context : {context}'),
         ('user', '{question}')
     ])
     
@@ -132,7 +131,7 @@ else:
             st.write(message['content'])
     
     # CHAT INPUT
-    if prompt := st.chat_input('What do you want to know about Mechanical things?'):
+    if prompt := st.chat_input('Get me your question.'):
         st.session_state.messages.append({'role': 'user', 'content': prompt})
         
         with st.chat_message('user'):
